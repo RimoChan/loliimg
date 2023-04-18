@@ -50,12 +50,11 @@ def ya(原图, 目标图, i, verbose=False):
             roi = slice(x1, x2), slice(y1, y2)
             size = (x2-x1)*(y2-y1)
             t = 切片方和(原图, roi, 1, False)
-            平均颜色 = t / size
-            h = 平均颜色.reshape([1, 1, 3])
+            # 平均颜色 = t / size
             原se = 切片方和(差值图, roi, 2)
             # _原se = ((原图[roi]-目标图[roi]).flatten()**2).sum()
             # print(-0.1 < 原se - _原se < 0.1)
-            新se = 切片方和(原图, roi, 2) + (size*h**2).sum() - (2*t*h).sum()
+            新se = 切片方和(原图, roi, 2) - (t/size*t).sum()
             return 新se-原se
         return [*map(粒子代价, 粒子群)]
     options = {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
@@ -87,7 +86,7 @@ def ride(真原图, epoch, 中间结果存储位置=None, resize=None, verbose='
         x1, y1, x2, y2 = q(best_pos)
         roi = slice(x1, x2), slice(y1, y2)
         平均颜色 = 原图[roi].mean(axis=(0, 1))
-        块组.append([[x1, y1, x2, y2], 平均颜色.astype(int)]) 
+        块组.append([[x1, y1, x2, y2], 平均颜色.astype(int)])
         目标图[roi] = np.array(平均颜色).reshape([1, 1, 3])
         目标图 = 目标图.copy()
         if 中间结果存储位置:
